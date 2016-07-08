@@ -103,6 +103,8 @@ namespace NewtonVR
 
             if (HmdHelper.isHtcVive())
                 SteamVR_Utils.Event.Listen("render_model_loaded", RenderModelLoaded);
+            else
+                SetDeviceIndex(0);
         }
 
         protected virtual void Update()
@@ -652,6 +654,9 @@ namespace NewtonVR
 
         private IEnumerator DoInitialize()
         {
+            if (HmdHelper.isOculus())
+                yield return new WaitForSeconds(2.0f);
+
             Rigidbody = this.GetComponent<Rigidbody>();
             if (Rigidbody == null)
                 Rigidbody = this.gameObject.AddComponent<Rigidbody>();
