@@ -201,9 +201,65 @@ namespace NewtonVR
 
     class OculusTouchController : IGenericController
     {
+		bool[] isAxisMapping = {
+			false, 	//NVR_Button_System = 0,
+			false,	//NVR_Button_ApplicationMenu = 1,
+			false,	//NVR_Button_Grip = 2,
+			false,	//NVR_Button_DPad_Left = 3,
+			false,	//NVR_Button_DPad_Up = 4,
+			false,	//NVR_Button_DPad_Right = 5,
+			false,	//NVR_Button_DPad_Down = 6,
+			false,	//NVR_Button_A = 7,
+			true,	//NVR_Button_Axis0 = 8,
+			true,	//NVR_Button_Axis1 = 9,
+			true,	//NVR_Button_Axis2 = 10,
+			true,	//NVR_Button_Axis3 = 11,
+			true,	//NVR_Button_Axis4 = 12,
+			true,	//NVR_Button_SteamVR_Touchpad = 13,
+			false,	//NVR_Button_SteamVR_Trigger = 14,
+			false,	//NVR_Button_Dashboard_Back = 15,
+		};
+
+		OVRInput.Button[] buttonMapping = {
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.PrimaryHandTrigger,
+			OVRInput.Button.DpadLeft,
+			OVRInput.Button.DpadUp,
+			OVRInput.Button.DpadRight,
+			OVRInput.Button.DpadDown,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.None,
+			OVRInput.Button.PrimaryIndexTrigger,
+			OVRInput.Button.None,
+		};
+
+		OVRInput.Axis2D[] axisMapping = {
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,//0
+			OVRInput.Axis2D.None,//1
+			OVRInput.Axis2D.None,//2
+			OVRInput.Axis2D.None,//3
+			OVRInput.Axis2D.None,//4
+			OVRInput.Axis2D.PrimaryThumbstick,//touchpad
+			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None,
+		};
+
         void IGenericController.Init(int index)
         {
-
         }
 
         void IGenericController.TriggerHapticPulse(ushort durationMicroSec, NVRButtonId buttonId)
@@ -217,17 +273,17 @@ namespace NewtonVR
 
         bool IGenericController.GetPress(NVRButtonId buttonId)
         {
-            return false;
+			return OVRInput.Get(buttonMapping[(int)buttonId]);
         }
 
         bool IGenericController.GetPressDown(NVRButtonId buttonId)
         {
-            return false;
+			return OVRInput.GetDown(buttonMapping[(int)buttonId]);
         }
 
         bool IGenericController.GetPressUp(NVRButtonId buttonId)
         {
-            return false;
+			return OVRInput.GetUp(buttonMapping[(int)buttonId]);
         }
 
         bool IGenericController.GetTouch(NVRButtonId buttonId)
