@@ -106,10 +106,6 @@ namespace NewtonVR
                 SteamVR_Utils.Event.Listen("render_model_loaded", RenderModelLoaded);
                 SteamVR_Utils.Event.Listen("new_poses_applied", OnNewPosesApplied);
             }
-            else
-            {
-                SetDeviceIndex(0);
-            }
         }
 
         private void OnNewPosesApplied(params object[] args)
@@ -150,6 +146,13 @@ namespace NewtonVR
             UseButtonDown = Inputs[UseButton].PressDown;
             UseButtonUp = Inputs[UseButton].PressUp;
             UseButtonAxis = Inputs[UseButton].SingleAxis;
+
+            // NOTE(kbenjaminsson): Simulating SteamVR "new_poses_applied" event for Oculus.
+            // temp until I know if there is an equivalent for Oculus
+            if (HmdHelper.isOculus())
+            {
+                OnNewPosesApplied(null);
+            }
 
             if (CurrentInteractionStyle == InterationStyle.GripDownToInteract)
             {
@@ -671,9 +674,6 @@ namespace NewtonVR
 
         private IEnumerator DoInitialize()
         {
-            if (HmdHelper.isOculus())
-                yield return new WaitForSeconds(2.0f);
-
             Rigidbody = this.GetComponent<Rigidbody>();
             if (Rigidbody == null)
                 Rigidbody = this.gameObject.AddComponent<Rigidbody>();
@@ -689,6 +689,12 @@ namespace NewtonVR
                 {
                     yield return StartCoroutine(WaitForRenderModel());
                     SetupSteamVrRenderModel(out Colliders);
+                }
+                else if (HmdHelper.isOculus())
+                {
+                    RenderModelInitialized = true;
+                    Colliders = GetComponentsInChildren<Collider>(); //note: these should be trigger colliders
+                    Debug.Log("Setting up Oculus Model");
                 }
             }
             else if (RenderModelInitialized == false)
@@ -776,8 +782,11 @@ namespace NewtonVR
 
         private void OnDestroy()
         {
-            SteamVR_Utils.Event.Remove("render_model_loaded", RenderModelLoaded);
-            SteamVR_Utils.Event.Remove("new_poses_applied", OnNewPosesApplied);
+            if (HmdHelper.isHtcVive())
+            {
+                SteamVR_Utils.Event.Remove("render_model_loaded", RenderModelLoaded);
+                SteamVR_Utils.Event.Remove("new_poses_applied", OnNewPosesApplied);
+            }
         }
     }
     

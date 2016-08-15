@@ -258,8 +258,13 @@ namespace NewtonVR
 			OVRInput.Axis2D.None,
 		};
 
+        NVRHandOculus.HandednessId handness;
+        OVRInput.Controller controllerType = OVRInput.Controller.None;
+
         void IGenericController.Init(int index)
         {
+            handness = (NVRHandOculus.HandednessId) index;
+            controllerType = (handness == NVRHandOculus.HandednessId.Left) ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
         }
 
         void IGenericController.TriggerHapticPulse(ushort durationMicroSec, NVRButtonId buttonId)
@@ -273,17 +278,17 @@ namespace NewtonVR
 
         bool IGenericController.GetPress(NVRButtonId buttonId)
         {
-			return OVRInput.Get(buttonMapping[(int)buttonId]);
+            return OVRInput.Get(buttonMapping[(int)buttonId], controllerType);
         }
 
         bool IGenericController.GetPressDown(NVRButtonId buttonId)
         {
-			return OVRInput.GetDown(buttonMapping[(int)buttonId]);
+            return OVRInput.GetDown(buttonMapping[(int)buttonId], controllerType);
         }
 
         bool IGenericController.GetPressUp(NVRButtonId buttonId)
         {
-			return OVRInput.GetUp(buttonMapping[(int)buttonId]);
+			return OVRInput.GetUp(buttonMapping[(int)buttonId], controllerType);
         }
 
         bool IGenericController.GetTouch(NVRButtonId buttonId)
