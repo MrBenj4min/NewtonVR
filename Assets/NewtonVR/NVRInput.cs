@@ -201,61 +201,42 @@ namespace NewtonVR
 
     class OculusTouchController : IGenericController
     {
-		bool[] isAxisMapping = {
-			false, 	//NVR_Button_System = 0,
-			false,	//NVR_Button_ApplicationMenu = 1,
-			false,	//NVR_Button_Grip = 2,
-			false,	//NVR_Button_DPad_Left = 3,
-			false,	//NVR_Button_DPad_Up = 4,
-			false,	//NVR_Button_DPad_Right = 5,
-			false,	//NVR_Button_DPad_Down = 6,
-			false,	//NVR_Button_A = 7,
-			true,	//NVR_Button_Axis0 = 8,
-			true,	//NVR_Button_Axis1 = 9,
-			true,	//NVR_Button_Axis2 = 10,
-			true,	//NVR_Button_Axis3 = 11,
-			true,	//NVR_Button_Axis4 = 12,
-			true,	//NVR_Button_SteamVR_Touchpad = 13,
-			false,	//NVR_Button_SteamVR_Trigger = 14,
-			false,	//NVR_Button_Dashboard_Back = 15,
-		};
-
 		OVRInput.Button[] buttonMapping = {
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.PrimaryHandTrigger,
-			OVRInput.Button.DpadLeft,
-			OVRInput.Button.DpadUp,
-			OVRInput.Button.DpadRight,
-			OVRInput.Button.DpadDown,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.None,
-			OVRInput.Button.PrimaryIndexTrigger,
-			OVRInput.Button.None,
+			OVRInput.Button.None, //NVR_Button_System = 0,
+			OVRInput.Button.None, //NVR_Button_ApplicationMenu = 1,
+			OVRInput.Button.PrimaryHandTrigger, //NVR_Button_Grip = 2,
+			OVRInput.Button.DpadLeft, //NVR_Button_DPad_Left = 3,
+			OVRInput.Button.DpadUp, //NVR_Button_DPad_Up = 4,
+			OVRInput.Button.DpadRight, //NVR_Button_DPad_Right = 5,
+			OVRInput.Button.DpadDown, //NVR_Button_DPad_Down = 6,
+			OVRInput.Button.None, //NVR_Button_A = 7,
+			OVRInput.Button.None, //NVR_Button_Axis0 = 8,
+			OVRInput.Button.None, //NVR_Button_Axis1 = 9,
+			OVRInput.Button.None, //NVR_Button_Axis2 = 10,
+			OVRInput.Button.None, //NVR_Button_Axis3 = 11,
+			OVRInput.Button.None, //NVR_Button_Axis4 = 12,
+			OVRInput.Button.None, //NVR_Button_SteamVR_Touchpad = 13,
+			OVRInput.Button.PrimaryIndexTrigger, //NVR_Button_SteamVR_Trigger = 14,
+			OVRInput.Button.None, //NVR_Button_Dashboard_Back = 15,
 		};
 
 		OVRInput.Axis2D[] axisMapping = {
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,//0
-			OVRInput.Axis2D.None,//1
-			OVRInput.Axis2D.None,//2
-			OVRInput.Axis2D.None,//3
-			OVRInput.Axis2D.None,//4
-			OVRInput.Axis2D.PrimaryThumbstick,//touchpad
-			OVRInput.Axis2D.None,
-			OVRInput.Axis2D.None,
+			OVRInput.Axis2D.None, //NVR_Button_System = 0,
+			OVRInput.Axis2D.None, //NVR_Button_ApplicationMenu = 1,
+			OVRInput.Axis2D.None, //NVR_Button_Grip = 2,
+			OVRInput.Axis2D.None, //NVR_Button_DPad_Left = 3,
+			OVRInput.Axis2D.None, //NVR_Button_DPad_Up = 4,
+			OVRInput.Axis2D.None, //NVR_Button_DPad_Right = 5,
+			OVRInput.Axis2D.None, //NVR_Button_DPad_Down = 6,
+			OVRInput.Axis2D.None, //NVR_Button_A = 7,
+			OVRInput.Axis2D.PrimaryThumbstick, //NVR_Button_Axis0 = 8,
+			OVRInput.Axis2D.None, //NVR_Button_Axis1 = 9,
+			OVRInput.Axis2D.None, //NVR_Button_Axis2 = 10,
+			OVRInput.Axis2D.None, //NVR_Button_Axis3 = 11,
+			OVRInput.Axis2D.None, //NVR_Button_Axis4 = 12,
+			OVRInput.Axis2D.None, //NVR_Button_SteamVR_Touchpad = 13,
+			OVRInput.Axis2D.None, //NVR_Button_SteamVR_Trigger = 14,
+			OVRInput.Axis2D.None, //NVR_Button_Dashboard_Back = 15,
 		};
 
         NVRHandOculus.HandednessId handness;
@@ -267,13 +248,23 @@ namespace NewtonVR
             controllerType = (handness == NVRHandOculus.HandednessId.Left) ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
         }
 
+        IEnumerator performHapticPulse(float millis)
+        {
+            float frequency = 0.5f;
+            float amplitude = 0.5f;
+            OVRInput.SetControllerVibration(frequency, amplitude, controllerType);
+            yield return new WaitForSeconds(millis / 1000.0f);
+            OVRInput.SetControllerVibration(0.0f, 0.0f, controllerType);
+        }
+
         void IGenericController.TriggerHapticPulse(ushort durationMicroSec, NVRButtonId buttonId)
         {
+//            StartCoroutine(performHapticPulse(durationMicroSec / 1000.0f));
         }
 
         Vector2 IGenericController.GetAxis(NVRButtonId buttonId)
         {
-            return Vector2.zero;
+            return OVRInput.Get(axisMapping[(int)buttonId], controllerType);
         }
 
         bool IGenericController.GetPress(NVRButtonId buttonId)
