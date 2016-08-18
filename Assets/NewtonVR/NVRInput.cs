@@ -239,6 +239,25 @@ namespace NewtonVR
 			OVRInput.Axis2D.None, //NVR_Button_Dashboard_Back = 15,
 		};
 
+        HapticPulseHelper hapticPulseHelper = null;
+
+        class HapticPulseHelper : MonoBehaviour
+        {
+            IEnumerator performHapticPulse(float millis, OVRInput.Controller controllerType)
+            {
+                float frequency = 0.5f;
+                float amplitude = 0.5f;
+                OVRInput.SetControllerVibration(frequency, amplitude, controllerType);
+                yield return new WaitForSeconds(millis / 1000.0f);
+                OVRInput.SetControllerVibration(0.0f, 0.0f, controllerType);
+            }
+
+            public void TriggerHapticPulse(ushort durationMicroSec, NVRButtonId buttonId, OVRInput.Controller controllerType)
+            {
+                StartCoroutine(performHapticPulse(durationMicroSec / 1000.0f, controllerType));
+            }
+        };
+
         NVRHandOculus.HandednessId handness;
         OVRInput.Controller controllerType = OVRInput.Controller.None;
 
@@ -246,20 +265,15 @@ namespace NewtonVR
         {
             handness = (NVRHandOculus.HandednessId) index;
             controllerType = (handness == NVRHandOculus.HandednessId.Left) ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
+
+            GameObject go = new GameObject();
+            hapticPulseHelper = go.AddComponent<HapticPulseHelper>();
         }
 
-        IEnumerator performHapticPulse(float millis)
-        {
-            float frequency = 0.5f;
-            float amplitude = 0.5f;
-            OVRInput.SetControllerVibration(frequency, amplitude, controllerType);
-            yield return new WaitForSeconds(millis / 1000.0f);
-            OVRInput.SetControllerVibration(0.0f, 0.0f, controllerType);
-        }
 
         void IGenericController.TriggerHapticPulse(ushort durationMicroSec, NVRButtonId buttonId)
         {
-//            StartCoroutine(performHapticPulse(durationMicroSec / 1000.0f));
+            hapticPulseHelper.TriggerHapticPulse(durationMicroSec, buttonId, controllerType);
         }
 
         Vector2 IGenericController.GetAxis(NVRButtonId buttonId)
