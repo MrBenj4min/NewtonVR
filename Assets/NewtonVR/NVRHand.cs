@@ -775,6 +775,9 @@ namespace NewtonVR
             {
                 if (HmdHelper.isHtcVive())
                     return this.GetComponentInChildren<SteamVR_RenderModel>().renderModelName;
+
+                if (HmdHelper.isOculus())
+                    return "Oculus";
             }
 
             return "Unknown";

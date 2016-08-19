@@ -27,13 +27,21 @@ namespace NewtonVR
             PhysicalController = GameObject.Instantiate(Hand.gameObject);
             PhysicalController.name = PhysicalController.name.Replace("(Clone)", " [Physical]");
 
-            SteamVR_RenderModel renderModel = PhysicalController.GetComponentInChildren<SteamVR_RenderModel>();
-            ModelParent = renderModel.transform;
+            if (HmdHelper.isHtcVive())
+            {
+                SteamVR_RenderModel renderModel = PhysicalController.GetComponentInChildren<SteamVR_RenderModel>();
+                ModelParent = renderModel.transform;
+                GameObject.DestroyImmediate(PhysicalController.GetComponent<SteamVR_TrackedObject>());
+                GameObject.DestroyImmediate(renderModel);
+            }
+
+            if (HmdHelper.isOculus())
+            {
+                ModelParent = PhysicalController.transform;
+            }
 
             GameObject.DestroyImmediate(PhysicalController.GetComponent<NVRPhysicalController>());
             GameObject.DestroyImmediate(PhysicalController.GetComponent<NVRHand>());
-            GameObject.DestroyImmediate(PhysicalController.GetComponent<SteamVR_TrackedObject>());
-            GameObject.DestroyImmediate(renderModel);
             GameObject.DestroyImmediate(PhysicalController.GetComponent<NVRPhysicalController>());
 
             Collider[] clonedColliders = PhysicalController.GetComponentsInChildren<Collider>();
@@ -93,6 +101,16 @@ namespace NewtonVR
                     }
 
                     Colliders = customCollidersTransform.GetComponentsInChildren<Collider>();
+                    break;
+
+                case "Oculus":
+                    Transform oculusCollidersTransform = GameObject.Instantiate(Resources.Load<GameObject>("OculusTouchColliders")).transform;
+                    oculusCollidersTransform.parent = ModelParent.transform;
+                    oculusCollidersTransform.localPosition = Vector3.zero;
+                    oculusCollidersTransform.localRotation = Quaternion.identity;
+                    oculusCollidersTransform.localScale = Vector3.one;
+
+                    Colliders = oculusCollidersTransform.GetComponentsInChildren<Collider>();
                     break;
 
                 default:
