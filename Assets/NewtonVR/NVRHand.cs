@@ -68,7 +68,7 @@ namespace NewtonVR
         {
             get
             {
-                return CurrentlyHoveringOver.Any(kvp => kvp.Value.Count > 0);
+                return CurrentlyHoveringOver.Any(kvp => kvp.Value.Count > 0 && kvp.Value.All(dvp => dvp.Key.gameObject.activeInHierarchy));
             }
         }
         public bool IsInteracting
@@ -79,6 +79,19 @@ namespace NewtonVR
             }
         }
 
+        public bool RumbleEnabled
+        {
+            get
+            {
+                return rumbleEnabled;
+            }
+
+            set
+            {
+                rumbleEnabled = value;
+            }
+        }
+        bool rumbleEnabled = true;
 
         protected virtual void Awake()
         {
@@ -393,7 +406,7 @@ namespace NewtonVR
             if (EstimationSampleIndex >= LastPositions.Length)
                 EstimationSampleIndex = 0;
 
-            if (Controller != null && IsInteracting == false && IsHovering == true)
+            if (Controller != null && IsInteracting == false && IsHovering == true && RumbleEnabled == true)
             {
                 Controller.TriggerHapticPulse(100);
             }
