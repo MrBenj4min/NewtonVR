@@ -456,6 +456,9 @@ namespace NewtonVR
                 if (hovering.Key == null)
                     continue;
 
+                if (!hovering.Value.All(dvp => dvp.Key.gameObject.activeInHierarchy))
+                    continue;
+
                 float distance = Vector3.Distance(this.transform.position, hovering.Key.transform.position);
                 if (distance < closestDistance)
                 {
