@@ -47,6 +47,9 @@ namespace NewtonVR
         public bool GetTouchDown(NVRButtonId buttonId) { return controller.GetTouchDown(buttonId); }
         public bool GetTouchUp(NVRButtonId buttonId) { return controller.GetTouchUp(buttonId); }
 
+        public Vector3 velocity { get { return controller.GetVelocity(); } }
+        public Vector3 angularVelocity { get { return controller.GetAngularVelocity(); } }
+
         IGenericController createController()
         {
             bool useOculus = UnityEngine.VR.VRSettings.loadedDeviceName == "Oculus";
@@ -122,6 +125,8 @@ namespace NewtonVR
         bool GetTouchDown(NVRButtonId buttonId);
         bool GetTouchUp(NVRButtonId buttonId);
 
+        Vector3 GetVelocity();
+        Vector3 GetAngularVelocity();
     }
 
 
@@ -194,6 +199,16 @@ namespace NewtonVR
         bool IGenericController.GetTouchUp(NVRButtonId buttonId)
         {
             return device.GetTouchUp(buttonMapping[(int)buttonId]);
+        }
+
+        Vector3 IGenericController.GetVelocity()
+        {
+            return device.velocity;
+        }
+
+        Vector3 IGenericController.GetAngularVelocity()
+        {
+            return device.angularVelocity;
         }
     }
 
@@ -310,5 +325,18 @@ namespace NewtonVR
         {
             return false;
         }
+
+        Vector3 IGenericController.GetVelocity()
+        {
+            return OVRInput.GetLocalControllerVelocity(controllerType);
+        }
+
+        Vector3 IGenericController.GetAngularVelocity()
+        {
+            //TODO(kbenjaminsson): Figure out what unit OVR angular velocity is in
+            //OVRInput.GetLocalControllerAngularVelocity(controllerType);
+            return Vector3.zero;
+        }
+
     }
 }
